@@ -1,13 +1,16 @@
 'use client';
 import { useState } from 'react';
-import DateTimePicker from 'react-datetime-picker';
+import Calendar from 'react-calendar';
+import TimePicker from 'react-time-picker';
 import 'react-calendar/dist/Calendar.css';
-import 'react-datetime-picker/dist/DateTimePicker.css';
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 import { CONTACT_EMAIL } from '../../lib/config';
 
 export default function Demo() {
   const [form, setForm] = useState({ name: '', business: '', email: '' });
   const [date, setDate] = useState<Date | null>(null);
+  const [time, setTime] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,7 +18,15 @@ export default function Demo() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const dateString = date ? date.toISOString() : '';
+    let dateTime: Date | null = null;
+    if (date && time) {
+      const [hours, minutes] = time.split(':').map(Number);
+      dateTime = new Date(date);
+      dateTime.setHours(hours);
+      dateTime.setMinutes(minutes);
+      dateTime.setSeconds(0);
+    }
+    const dateString = dateTime ? dateTime.toISOString() : '';
     const body = `Name: ${form.name}\nBusiness: ${form.business}\nEmail: ${form.email}\nPreferred date: ${dateString}`;
     const mailto = `mailto:${CONTACT_EMAIL}?subject=Demo%20Request&body=${encodeURIComponent(body)}`;
     window.location.href = mailto;
@@ -55,13 +66,30 @@ export default function Demo() {
           value={form.email}
           onChange={handleChange}
         />
-        <DateTimePicker
-          onChange={setDate}
-          value={date}
-          className="w-full"
-          clearIcon={null}
-          format="y-MM-dd h:mm a"
-        />
+        <div className="space-y-4">
+          <Calendar
+            onChange={(value) => setDate(value as Date)}
+            value={date}
+            className="w-full rounded-md"
+          />
+          <TimePicker
+            onChange={(value) => setTime(value ?? '')}
+            value={time}
+            className="w-full"
+            clearIcon={null}
+          />
+          {date && time && (
+            <p className="text-sm text-center">
+              Selected:{' '}
+              {new Date(
+                new Date(date).setHours(
+                  Number(time.split(':')[0]),
+                  Number(time.split(':')[1])
+                )
+              ).toLocaleString()}
+            </p>
+          )}
+        </div>
         <button
           type="submit"
           className="bg-foreground text-background px-4 py-2 rounded-md w-full hover:bg-[#383838] dark:hover:bg-[#ccc] transition-colors"

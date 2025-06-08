@@ -13,6 +13,12 @@
   color: var(--foreground);
 }
 
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background: #f3f4f6;
+  color: var(--foreground);
+}
+
 .react-calendar__tile--active,
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus {
@@ -22,6 +28,11 @@
 
 .react-calendar__tile--now {
   background: #e2e8f0;
+}
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  background: #cbd5e1;
 }
 
 .react-time-picker__wrapper {

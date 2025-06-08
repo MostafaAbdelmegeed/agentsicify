@@ -1,23 +1,24 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Calendar from 'react-calendar';
 import TimePicker from 'react-time-picker';
 import 'react-calendar/dist/Calendar.css';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import './demo.css';
-import { CONTACT_EMAIL } from '../../lib/config';
 
 export default function Demo() {
   const [form, setForm] = useState({ name: '', business: '', email: '' });
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState('');
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let dateTime: Date | null = null;
     if (date && time) {
@@ -28,9 +29,12 @@ export default function Demo() {
       dateTime.setSeconds(0);
     }
     const dateString = dateTime ? dateTime.toISOString() : '';
-    const body = `Name: ${form.name}\nBusiness: ${form.business}\nEmail: ${form.email}\nPreferred date: ${dateString}`;
-    const mailto = `mailto:${CONTACT_EMAIL}?subject=Demo%20Request&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
+    await fetch('/api/book-demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, date: dateString }),
+    });
+    router.push('/demo/success');
   };
 
   return (
@@ -78,6 +82,8 @@ export default function Demo() {
             value={time}
             className="w-full"
             clearIcon={null}
+            clockIcon={null}
+            disableClock
           />
           {date && time && (
             <p className="text-sm text-center">

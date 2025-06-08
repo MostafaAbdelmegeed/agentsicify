@@ -29,6 +29,12 @@ const services = [
       "Develop tailored multi-agent collaboration platforms.",
     img: "/services/cog-6-tooth.svg",
   },
+  {
+    title: "Payroll Automation",
+    description:
+      "Automate payroll calculations and global compliance.",
+    img: "/services/globe-alt.svg",
+  },
 ];
 
 export default function Services() {

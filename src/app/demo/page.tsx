@@ -5,6 +5,7 @@ import TimePicker from 'react-time-picker';
 import 'react-calendar/dist/Calendar.css';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
+import './demo.css';
 import { CONTACT_EMAIL } from '../../lib/config';
 
 export default function Demo() {

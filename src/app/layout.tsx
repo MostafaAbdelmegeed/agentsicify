@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Navbar from "../components/Navbar";
 
 export const metadata: Metadata = {
   title: "Agentsicify - AI Agentic Solutions",
@@ -13,9 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        {children}
-      </body>
+      <body className="antialiased flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        </body>
     </html>
   );
 }

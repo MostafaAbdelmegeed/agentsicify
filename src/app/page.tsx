@@ -9,27 +9,27 @@ export default function Home() {
           AI agentic solutions that help modern businesses automate workflows and unlock growth.
         </p>
         <Link
-          href="#contact"
+          href="/demo"
           className="rounded-full bg-foreground text-background px-6 py-3 text-sm font-medium hover:bg-[#383838] dark:hover:bg-[#ccc] transition-colors"
         >
-          Get Started
+          Book a Demo
         </Link>
       </main>
       <section className="grid gap-8 py-16 px-6 max-w-5xl mx-auto md:grid-cols-3 text-center">
         <div>
-          <h3 className="mb-2 text-xl font-medium">Automation</h3>
+          <h3 className="mb-2 text-xl font-medium">⚙️ Automation</h3>
           <p className="text-gray-600 dark:text-gray-400">Streamline repetitive tasks with custom AI agents.</p>
         </div>
         <div>
-          <h3 className="mb-2 text-xl font-medium">Insights</h3>
+          <h3 className="mb-2 text-xl font-medium">📊 Insights</h3>
           <p className="text-gray-600 dark:text-gray-400">Analyze data in real time to drive better decisions.</p>
         </div>
         <div>
-          <h3 className="mb-2 text-xl font-medium">Growth</h3>
+          <h3 className="mb-2 text-xl font-medium">🚀 Growth</h3>
           <p className="text-gray-600 dark:text-gray-400">Scale your business with intelligent automations.</p>
         </div>
       </section>
-      <footer id="contact" className="py-6 text-center text-sm text-gray-500">
+      <footer className="py-6 text-center text-sm text-gray-500">
         © {new Date().getFullYear()} Agentsicify
       </footer>
     </div>

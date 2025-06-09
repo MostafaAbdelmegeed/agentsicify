@@ -21,13 +21,12 @@ You can start editing the page by modifying `app/page.tsx`. The landing page use
 ### Supabase configuration
 
 Demo bookings are stored in a Supabase table. Provide credentials in `.env.local`:
-
 ```
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key # optional
 ```
-
-These variables must be present for the booking form to submit successfully.
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required for the booking form to submit successfully. If row level security is enabled on your `appointments` table, also provide `SUPABASE_SERVICE_ROLE_KEY` so the API route can insert new rows.
 
 ## Learn More
 

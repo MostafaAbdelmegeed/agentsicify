@@ -15,6 +15,7 @@ export default function Demo() {
   const [time, setTime] = useState('');
   const [timezone, setTimezone] = useState('');
   const [timezones, setTimezones] = useState<string[]>([]);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -35,12 +36,21 @@ export default function Demo() {
       minute: minutes,
       second: 0,
     });
-    await fetch('/api/book-demo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, date: dt.toISO() }),
-    });
-    router.push('/demo/success');
+    try {
+      const res = await fetch('/api/book-demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, date: dt.toISO() }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Unexpected error');
+      }
+      router.push('/demo/success');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unexpected error';
+      setError(message);
+    }
   };
 
   return (
@@ -122,6 +132,11 @@ export default function Demo() {
           Submit
         </button>
       </form>
+      {error && (
+        <p className="text-red-600 mt-4 text-center" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

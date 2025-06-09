@@ -2,6 +2,16 @@ import { NextResponse } from 'next/server';
 import { getSupabase } from '../../../lib/supabase';
 
 export async function POST(request: Request) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !anonKey) {
+    return NextResponse.json(
+      { ok: false, error: 'Supabase credentials not configured' },
+      { status: 500 }
+    );
+  }
+
   const supabase = getSupabase();
   const { name, business, email, date } = await request.json();
 

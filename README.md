@@ -27,6 +27,8 @@ NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
+These variables must be present for the booking form to submit successfully.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

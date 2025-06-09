@@ -24,12 +24,16 @@ export default function Demo() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date || !time) return;
+    if (!date || !time) {
+      setError('Please select a date and time.');
+      return;
+    }
     const [hours, minutes] = time.split(':').map(Number);
     const dt = DateTime.fromJSDate(date, { zone: timezone }).set({
       hour: hours,
@@ -89,7 +93,10 @@ export default function Demo() {
         />
         <select
           value={timezone}
-          onChange={(e) => setTimezone(e.target.value)}
+          onChange={(e) => {
+            setError('');
+            setTimezone(e.target.value);
+          }}
           className="w-full border p-2 rounded-md focus:outline-none focus:ring"
         >
           {timezones.map((tz) => (
@@ -100,12 +107,18 @@ export default function Demo() {
         </select>
         <div className="space-y-4">
           <Calendar
-            onChange={(value) => setDate(value as Date)}
+            onChange={(value) => {
+              setError('');
+              setDate(value as Date);
+            }}
             value={date}
             className="w-full rounded-md"
           />
           <TimePicker
-            onChange={(value) => setTime(value ?? '')}
+            onChange={(value) => {
+              setError('');
+              setTime(value ?? '');
+            }}
             value={time}
             className="w-full"
             clearIcon={null}
@@ -127,7 +140,12 @@ export default function Demo() {
         </div>
         <button
           type="submit"
-          className="bg-foreground text-background px-4 py-2 rounded-md w-full hover:bg-[#383838] dark:hover:bg-[#ccc] transition-colors"
+          disabled={!date || !time}
+          className={`bg-foreground text-background px-4 py-2 rounded-md w-full transition-colors ${
+            !date || !time
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:bg-[#383838] dark:hover:bg-[#ccc]'
+          }`}
         >
           Submit
         </button>

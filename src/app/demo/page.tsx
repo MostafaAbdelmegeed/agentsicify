@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
 import Calendar from 'react-calendar';
 import TimePicker from 'react-time-picker';
@@ -12,6 +13,9 @@ export default function Demo() {
   const [form, setForm] = useState({ name: '', business: '', email: '' });
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState('');
+  const [timezone, setTimezone] = useState(
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,19 +24,17 @@ export default function Demo() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let dateTime: Date | null = null;
-    if (date && time) {
-      const [hours, minutes] = time.split(':').map(Number);
-      dateTime = new Date(date);
-      dateTime.setHours(hours);
-      dateTime.setMinutes(minutes);
-      dateTime.setSeconds(0);
-    }
-    const dateString = dateTime ? dateTime.toISOString() : '';
+    if (!date || !time) return;
+    const [hours, minutes] = time.split(':').map(Number);
+    const dt = DateTime.fromJSDate(date, { zone: timezone }).set({
+      hour: hours,
+      minute: minutes,
+      second: 0,
+    });
     await fetch('/api/book-demo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, date: dateString }),
+      body: JSON.stringify({ ...form, date: dt.toISO() }),
     });
     router.push('/demo/success');
   };
@@ -71,6 +73,17 @@ export default function Demo() {
           value={form.email}
           onChange={handleChange}
         />
+        <select
+          value={timezone}
+          onChange={(e) => setTimezone(e.target.value)}
+          className="w-full border p-2 rounded-md focus:outline-none focus:ring"
+        >
+          {Intl.supportedValuesOf('timeZone').map((tz) => (
+            <option key={tz} value={tz}>
+              {tz}
+            </option>
+          ))}
+        </select>
         <div className="space-y-4">
           <Calendar
             onChange={(value) => setDate(value as Date)}
@@ -88,12 +101,13 @@ export default function Demo() {
           {date && time && (
             <p className="text-sm text-center">
               Selected:{' '}
-              {new Date(
-                new Date(date).setHours(
-                  Number(time.split(':')[0]),
-                  Number(time.split(':')[1])
-                )
-              ).toLocaleString()}
+              {DateTime.fromJSDate(date, { zone: timezone })
+                .set({
+                  hour: Number(time.split(':')[0]),
+                  minute: Number(time.split(':')[1]),
+                  second: 0,
+                })
+                .toLocaleString(DateTime.DATETIME_FULL)}
             </p>
           )}
         </div>

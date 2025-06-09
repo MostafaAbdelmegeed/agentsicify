@@ -18,16 +18,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The landing page uses Tailwind CSS and system fonts for easy customization.
 
-### Email configuration
+### Supabase configuration
 
-Booking requests are sent via SMTP. Create a `.env.local` file with the following variables:
+Demo bookings are stored in a Supabase table. Provide credentials in `.env.local`:
 
 ```
-EMAIL_HOST=smtp.example.com
-EMAIL_PORT=465
-EMAIL_USER=your_username
-EMAIL_PASS=your_password
-EMAIL_FROM=demo@yourdomain.com # optional
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ## Learn More

@@ -1,26 +1,20 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-import { CONTACT_EMAIL } from '../../../lib/config';
+import { getSupabase } from '../../../lib/supabase';
 
 export async function POST(request: Request) {
+  const supabase = getSupabase();
   const { name, business, email, date } = await request.json();
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT) || 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
+  const { error } = await supabase.from('appointments').insert({
+    client_name: name,
+    business_name: business,
+    client_email: email,
+    appointment_time: date,
   });
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-    to: CONTACT_EMAIL,
-    subject: 'New demo booking',
-    text: `Name: ${name}\nBusiness: ${business}\nEmail: ${email}\nPreferred date: ${date}`,
-  });
+  if (error) {
+    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }

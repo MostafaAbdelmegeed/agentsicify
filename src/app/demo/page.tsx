@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
 import Calendar from 'react-calendar';
@@ -13,10 +13,14 @@ export default function Demo() {
   const [form, setForm] = useState({ name: '', business: '', email: '' });
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState('');
-  const [timezone, setTimezone] = useState(
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-  );
+  const [timezone, setTimezone] = useState('');
+  const [timezones, setTimezones] = useState<string[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    setTimezones(Intl.supportedValuesOf('timeZone') as string[]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -78,7 +82,7 @@ export default function Demo() {
           onChange={(e) => setTimezone(e.target.value)}
           className="w-full border p-2 rounded-md focus:outline-none focus:ring"
         >
-          {Intl.supportedValuesOf('timeZone').map((tz) => (
+          {timezones.map((tz) => (
             <option key={tz} value={tz}>
               {tz}
             </option>

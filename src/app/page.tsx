@@ -1,6 +1,7 @@
 'use client';
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -48,7 +49,7 @@ export default function Home() {
       {/* Content */}
       <main className="flex flex-1 flex-col items-center justify-center text-center px-6 py-20 gap-8 relative z-10">
         <div className="hero-content">
-          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent mb-6 animate-fade-in">
+          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 gradient-text-large mb-6 animate-fade-in">
             Agentsicify
           </h1>
           <div className="tagline-container">
@@ -114,11 +115,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="relative z-10 py-8 text-center text-sm text-gray-500 border-t border-gray-200 dark:border-gray-800">
-        <div className="max-w-6xl mx-auto px-6">
-          <p>© {new Date().getFullYear()} Agentsicify. Empowering businesses with AI automation.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

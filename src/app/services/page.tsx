@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Footer from "../../components/Footer";
 
 const services = [
   {
@@ -151,6 +152,7 @@ export default function Services() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

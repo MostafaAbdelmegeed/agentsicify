@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
 import Calendar from 'react-calendar';
@@ -18,33 +18,55 @@ export default function Demo() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  const availableTimezones = useMemo(() => {
+    return Intl.supportedValuesOf('timeZone') as string[];
+  }, []);
+
   useEffect(() => {
     setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    setTimezones(Intl.supportedValuesOf('timeZone') as string[]);
-  }, []);
+    setTimezones(availableTimezones);
+  }, [availableTimezones]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const selectedDateTime = useMemo(() => {
+    if (!date || !time) return null;
+    const [hours, minutes] = time.split(':').map(Number);
+    return DateTime.fromJSDate(date, { zone: timezone })
+      .set({ hour: hours, minute: minutes, second: 0 });
+  }, [date, time, timezone]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!form.name.trim() || !form.business.trim() || !form.email.trim()) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+    
+    if (!/\S+@\S+\.\S+/.test(form.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    
     if (!date || !time) {
       setError('Please select a date and time.');
       return;
     }
-    const [hours, minutes] = time.split(':').map(Number);
-    const dt = DateTime.fromJSDate(date, { zone: timezone }).set({
-      hour: hours,
-      minute: minutes,
-      second: 0,
-    });
+    
+    if (!selectedDateTime) {
+      setError('Invalid date or time selected.');
+      return;
+    }
+    
     try {
       const res = await fetch('/api/book-demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, date: dt.toISO() }),
+        body: JSON.stringify({ ...form, date: selectedDateTime.toISO() }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -125,16 +147,9 @@ export default function Demo() {
             clockIcon={null}
             disableClock
           />
-          {date && time && (
+          {selectedDateTime && (
             <p className="text-sm text-center">
-              Selected:{' '}
-              {DateTime.fromJSDate(date, { zone: timezone })
-                .set({
-                  hour: Number(time.split(':')[0]),
-                  minute: Number(time.split(':')[1]),
-                  second: 0,
-                })
-                .toLocaleString(DateTime.DATETIME_FULL)}
+              Selected: {selectedDateTime.toLocaleString(DateTime.DATETIME_FULL)}
             </p>
           )}
         </div>

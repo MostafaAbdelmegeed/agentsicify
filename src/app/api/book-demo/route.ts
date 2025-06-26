@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getSupabase } from '../../../lib/supabase';
+import { z } from 'zod';
+
+const schema = z.object({
+  name: z.string(),
+  business: z.string(),
+  email: z.string().email(),
+  date: z.string().datetime(),
+});
 
 export async function POST(request: Request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -14,7 +22,15 @@ export async function POST(request: Request) {
   }
 
   const supabase = getSupabase(Boolean(serviceKey));
-  const { name, business, email, date } = await request.json();
+  const body = await request.json();
+
+  const result = schema.safeParse(body);
+
+  if (!result.success) {
+    return NextResponse.json({ ok: false, error: result.error.errors[0].message }, { status: 400 });
+  }
+
+  const { name, business, email, date } = result.data;
 
   const { error } = await supabase.from('appointments').insert({
     client_name: name,

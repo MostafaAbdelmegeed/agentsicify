@@ -8,6 +8,13 @@ import 'react-calendar/dist/Calendar.css';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import './demo.css';
+import { z } from 'zod';
+
+const schema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  business: z.string().min(1, { message: 'Business name is required' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+});
 
 export default function Demo() {
   const [form, setForm] = useState({ name: '', business: '', email: '' });
@@ -41,27 +48,24 @@ export default function Demo() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!form.name.trim() || !form.business.trim() || !form.email.trim()) {
-      setError('Please fill in all required fields.');
+
+    const result = schema.safeParse(form);
+
+    if (!result.success) {
+      setError(result.error.errors[0].message);
       return;
     }
-    
-    if (!/\S+@\S+\.\S+/.test(form.email)) {
-      setError('Please enter a valid email address.');
-      return;
-    }
-    
+
     if (!date || !time) {
       setError('Please select a date and time.');
       return;
     }
-    
+
     if (!selectedDateTime) {
       setError('Invalid date or time selected.');
       return;
     }
-    
+
     try {
       const res = await fetch('/api/book-demo', {
         method: 'POST',

@@ -41,9 +41,6 @@ export default function Footer() {
         
         <div className="footer-copyright">
           <p>© {new Date().getFullYear()} Agentsicify. Empowering businesses with AI automation.</p>
-          <p className="mt-2 text-xs">
-            Built with ❤️ using Next.js, TypeScript, and modern web technologies
-          </p>
         </div>
       </div>
     </footer>

@@ -5,6 +5,11 @@ import Navbar from "../components/Navbar";
 export const metadata: Metadata = {
   title: "Agentsicify - AI Agentic Solutions",
   description: "Premium AI agentic solutions tailored for modern businesses.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getSupabase } from '../../../lib/supabase';
 import { z } from 'zod';
+import { DateTime } from 'luxon';
 
 const schema = z.object({
   name: z.string(),
   business: z.string(),
   email: z.string().email(),
-  date: z.string().datetime(),
+  date: z.string(), // Changed to string, will validate manually
 });
 
 export async function POST(request: Request) {
@@ -32,11 +33,21 @@ export async function POST(request: Request) {
 
   const { name, business, email, date } = result.data;
 
+  console.log('Received date string:', date);
+
+  // Manual date validation using Luxon
+  const parsedDate = DateTime.fromISO(date);
+  console.log('Parsed date isValid:', parsedDate.isValid);
+
+  if (!parsedDate.isValid) {
+    return NextResponse.json({ ok: false, error: 'Invalid date format provided.' }, { status: 400 });
+  }
+
   const { error } = await supabase.from('appointments').insert({
     client_name: name,
     business_name: business,
     client_email: email,
-    appointment_time: date,
+    appointment_time: parsedDate.toISO(), // Ensure consistent ISO format for DB
   });
 
   if (error) {
